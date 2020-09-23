@@ -67,7 +67,7 @@ writeFastq(SelectReads, paste("INDEX_1_5", sep="_", "treatment_results.fq"))
 
 ```
 
-Another additional process which can be done in preprocessing is the filtering of short reads in the output file which can be done by grep in the same r script
+Another additional process which can be done in preprocessing is the filtering of short reads in the output file which can be done by grep in the same r script. for example in arabidopsis thaliana data we want to filter the reads based on lenght 31. 
 ```
 select_reads <- grep("^.{31}$", sread(SelectReads))
 SelectReads <- SelectReads[select_reads]
