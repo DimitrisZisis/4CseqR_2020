@@ -83,3 +83,14 @@ The reads were mapped to the libraryof fragments created based on the genome of 
 A bash script to run salmon (salmon.sh) is provided by the 4CseqR pipeline. 
 
 Command line,bedtools and a python script (*merge_4cnew.py*) are used in order to create the proper input for normalization. An R script (*csv_to_bed.r*) is provided to create bed files in case of visalizations in a genome broswer and .csv files are used as input in the normalization function. 
+
+**5. Normalization**
+
+The counts of reads are normalized according to the procedure based on ranking within classes of fragments (blind/non blind, length of ends, total length). Ranks within each category are expressed in the scale from 0 to 1 and the total coverage is expressed as a value from 0 to 2. The input of the R function is the input_filename and the categories of distance and length (lefS_categories_limits, rigS_categories_limits,lenght_categories_limits) based to the needs of each experiment. To normalize the example data:
+```
+input_filename = "/home/dimitris/4CseqR/Data/finaltable1_5leng100.csv"
+lefS_categories_limits = c(50, 100, 150, 200, 250, 300, 350, 400)
+rigS_categories_limits = c(50, 100, 150, 200, 250, 300, 350, 400)
+lenght_categories_limits = c(50, 100, 150, 200, 400, 600, 800)
+NormalizationRanks= normalization_ranks(input_filename,lefS_categories_limits, rigS_categories_limits, lenght_categories_limits)```
+
