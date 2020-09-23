@@ -50,7 +50,7 @@ write.table(newfragments, file = filteredLibraryName,quote = FALSE,row.names=FAL
 
 The resulting table with library of fragmens is saved in .bed format and is used in bedtools to create a fasta file which will be the input to the mapping procedure. A script (*getfasta.sh*) has been provided for this reason. 
 
-**2. Data Preprocessing**
+**2. Data Pre processing**
 
 4CseqR takes as input fastq files directly after sequencing. It filters the original reads to keep only those that start directly at a restriction enzyme cutting site. The NGS data obtained for all samples (fastq format) are at the beginning processed by filtering out truncated reads and the reads that did not contain the primary restriction site 
 Main purpose of this preprocessing step is to find the reads from the original files which are legitimate 4C reads which means that they contain the sequence (primer + restr.site ). For filtering and trimming the primer sequences from the fastq reads the R function *select.reads* is provided. The user have to create two text files (primer_filename, restriction_filename) with the primer sequences and the enzyme recognition sequences for each experiment  and also the fastq read files (fastq_filename). 
@@ -73,7 +73,13 @@ select_reads <- grep("^.{31}$", sread(SelectReads))
 SelectReads <- SelectReads[select_reads]
 writeFastq(SelectReads, paste("INDEX_1_5", "_treatment_results31.fq", sep=""))
 ```
-**3. Mapping of primer sequence and Mapping of reads**
+**3. Mapping of reads**
 
 The reads were mapped to the libraryof fragments created based on the genome of the selected species used as the reference. Mapping was conducted by Bowtie2 in all positions with up to 2 mismatches allowed in the contact region only and without mismatches in the restriction sequence. The reads mapped to regerence genome or library offragments  are combined for further analysis. A script (*mapping.sh*) is provided for this step. 
 
+**4. Estimate Coverage**
+
+4CseqR provides a script (*run_salmon.sh*) which is taking care about the non-uniquely mapped reads  especially in the pericentromeric region of each chromosome.  The pipeline applies the mapper Salmon from R.Patro et, al. [Nat Methods 2017 ]. Salmon is a tool that is developed to perform quantification of gene expression in RNA-seq experiments. Salmon supports two modes either with a FASTA file containing a reference genome and a set of reads in a FASTQ file or a set of pre-computed alignments in a SAM/BAM file. We use the second mode of Salmon by taking the output of mapping with the alignments in SAM format and the library of fragments as reference in FASTA. 
+A bash script to run salmon (salmon.sh) is provided by the 4CseqR pipeline. 
+
+Command line,bedtools and a python script (*merge_4cnew.py*) are used in order to create the proper input for normalization. An R script (*csv_to_bed.r*) is provided to create bed files in case of visalizations in a genome broswer and .csv files are used as input in the normalization function. 
