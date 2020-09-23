@@ -25,7 +25,7 @@ In order to be able to run all steps of 4CseqR the following tools are required 
 
 The input to 4CseqR is the data from a 4C-seq experiment in fastq format. The 4CseqR pipeline provides script from pre-processing to mapping reads to the reference genome or to a library of genome, estimate coverage, and normalize it providing tables at each step. Further to normalization, a new statistical approach is provided in R . The user can choose either LMM approach or Fisher binary test to analyze the counts. For each step of the analysis, 4CseqR provides tables and graphs with the use of simple R scripts, for further exploration of the data.  
 
-**1. Library of fragments
+**1. Library of fragments**
 
 To create the library of fragments for the selected reference genome, in 4CseqR we are using the function *createVirtualFragmentLibrary* from Basic4Cseq tool. Two restriction enzymes have to be specified that cut the DNA, the read length is needed to check the fragment ends of corresponding length for uniqueness. Filtering options (minimum and maximum size) are provided on fragment level and on fragment end level. The following exapmle is used to create a library of fragments for Arabidopsis thaliana (TAIR10) : 
 ```
