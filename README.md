@@ -75,12 +75,21 @@ writeFastq(SelectReads, paste("INDEX_1_5", "_treatment_results31.fq", sep=""))
 ```
 **3. Mapping of reads**
 
-The reads were mapped to the libraryof fragments created based on the genome of the selected species used as the reference. Mapping was conducted by Bowtie2 in all positions with up to 2 mismatches allowed in the contact region only and without mismatches in the restriction sequence. The reads mapped to regerence genome or library offragments  are combined for further analysis. A script (*mapping.sh*) is provided for this step. 
+The reads were mapped to the library of fragments created based on the genome of the selected species used as the reference.In order to create an index file the bowtie2-build script is used.  Mapping was conducted by Bowtie2 in all positions with up to 2 mismatches allowed in the contact region only and without mismatches in the restriction sequence. The reads mapped to regerence genome or library offragments  are combined for further analysis. A script (*mapping.sh*) is provided for this step. 
+```
+bowtie2-build --offrate 1 Library_fragments_AGATCT.fa  Library_fragments_AGATCT
+
+bowtie2 -q -x AGATCT_fragments_new --no-unal --score-min L,0,-0.40 -U arabidopsis_1_1_Perfect31.fq -S arabidopsis_1_1_test_new.sam
+```
+
 
 **4. Estimate Coverage**
 
 4CseqR provides a script (*run_salmon.sh*) which is taking care about the non-uniquely mapped reads  especially in the pericentromeric region of each chromosome.  The pipeline applies the mapper Salmon from R.Patro et, al. [Nat Methods 2017 ]. Salmon is a tool that is developed to perform quantification of gene expression in RNA-seq experiments. Salmon supports two modes either with a FASTA file containing a reference genome and a set of reads in a FASTQ file or a set of pre-computed alignments in a SAM/BAM file. We use the second mode of Salmon by taking the output of mapping with the alignments in SAM format and the library of fragments as reference in FASTA. 
 A bash script to run salmon (salmon.sh) is provided by the 4CseqR pipeline. 
+```
+salmon quant -t Library_fragments_AGATCT.fa --libType A -a sample1.sam -o salmon_quant_sample1
+```
 
 Command line,bedtools and a python script (*merge_4cnew.py*) are used in order to create the proper input for normalization. An R script (*csv_to_bed.r*) is provided to create bed files in case of visalizations in a genome broswer and .csv files are used as input in the normalization function. 
 
@@ -93,4 +102,17 @@ lefS_categories_limits = c(50, 100, 150, 200, 250, 300, 350, 400)
 rigS_categories_limits = c(50, 100, 150, 200, 250, 300, 350, 400)
 lenght_categories_limits = c(50, 100, 150, 200, 400, 600, 800)
 NormalizationRanks= normalization_ranks(input_filename,lefS_categories_limits, rigS_categories_limits, lenght_categories_limits)```
+```
+**6. Linear mixed model (LMM)**
+The normalized ranks with the coverage of restriction fragments are used as input to the linear mixed model (LMM) as a tool of data analysis in order to find genomic windows which can be inferred to be in contact with the bait to a different degree in different experimental variants. The 4CseqR performs a linear mixed model analysis through a function called LMMPerWin. For a particular sliding window, with specific step in which there is a number of restriction fragments, an LMM model is created for the normalized coverage as the outcome variable and is fitted using the lmerTest package in R. An R script called sliding_window_LMM.R is provided for the LMM analysis.
+
+**7. Binarization**
+
+The binarization is performed on the estimated coverage obtained from Salmon. As it is described in Methods, the binary implementation is done with respect to a threshold (P). The proposed transformation takes the estimated coverage of fragments and converts it into 0 or 1 based on the threshold P = 1.An R script called binarization.R is available for this step.
+
+**8. Fisher exact test **
+
+Following binarization of estimated fragment coverage, a Fisher exact test is used to identify DCWs and DCRs. As input to the Fisher exact test we use a table in .csv format with binary results for all replications under each treatment.The 4CseqR performs the fisher exacts test analysis through a function called FisherPerWin. For a particular sliding window, with specific step in which there is a number of restriction fragments, a fisher test is created for the binarized coverage as the outcome variable and is fitted using the fisher.test package in R. An R script called sliding_window_fisher.R is provided for the LMM analysis.
+
+
 
