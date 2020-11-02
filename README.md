@@ -107,17 +107,20 @@ NormalizationRanks= normalization_ranks(input_filename,lefS_categories_limits, r
 **6. Linear mixed model (LMM)**
 The normalized ranks with the coverage of restriction fragments are used as input to the linear mixed model (LMM) as a tool of data analysis in order to find genomic windows which can be inferred to be in contact with the bait to a different degree in different experimental variants. The 4CseqR performs a linear mixed model analysis through a function called *LMMPerWin*.
 For a particular sliding window, with specific step in which there is a number of restriction fragments, an LMM model is created for the normalized coverage as the outcome variable and is fitted using the lmerTest package in R. 
+
 An R script called *sliding_window_LMM.R* is provided for the LMM analysis.
 
 **7. Binarization**
 
 The binarization is performed on the estimated coverage obtained from Salmon. As it is described in Methods, the binary implementation is done with respect to a threshold (P). The proposed transformation takes the estimated coverage of fragments and converts it into 0 or 1 based on the threshold P = 1.
+
 An R script called *binarization.R* is available for this step.
 
 **8. Fisher exact test**
 
 Following binarization of estimated fragment coverage, a Fisher exact test is used to identify DCWs and DCRs. As input to the Fisher exact test we use a table in .csv format with binary results for all replications under each treatment.The 4CseqR performs the fisher exacts test analysis through a function called *FisherPerWin*. 
 For a particular sliding window, with specific step in which there is a number of restriction fragments, a fisher test is created for the binarized coverage as the outcome variable and is fitted using the fisher.test package in R. 
+
 An R script called *sliding_window_fisher.R* is provided for the fisher analysis.
 
 
